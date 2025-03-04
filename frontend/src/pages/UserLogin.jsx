@@ -17,7 +17,7 @@ const UserLogin = () => {
         "http://localhost:8090/api/users/login",
         { email, password }
       );
-
+      console.log(response.data);
       if (response.status === 200) {
         localStorage.setItem("user", JSON.stringify(response.data)); // Store user data
         setMessage({ type: "success", text: "Login successful!" });

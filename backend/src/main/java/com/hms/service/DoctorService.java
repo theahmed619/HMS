@@ -1,6 +1,7 @@
 package com.hms.service;
 
 import com.hms.entity.Doctor;
+import com.hms.entity.User;
 import com.hms.repository.DoctorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class DoctorService {
     }
 
     // Doctor login
-    public Optional<Doctor> loginDoctor(String email, String password) {
+    public Doctor loginDoctor(String email, String password) {
         return doctorRepository.findByEmailAndPassword(email, password);
     }
 

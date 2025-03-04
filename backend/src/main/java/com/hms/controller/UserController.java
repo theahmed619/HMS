@@ -66,14 +66,5 @@ public class UserController {
         }
     }
 
-    // Book Appointment
-    @PostMapping("/appointments")
-    public ResponseEntity<String> bookAppointment(@RequestBody Appointment appointment) {
-        boolean isBooked = appointmentService.bookAppointment(appointment);
-        if (isBooked) {
-            return ResponseEntity.ok("Appointment booked successfully!");
-        } else {
-            return ResponseEntity.badRequest().body("Failed to book appointment!");
-        }
-    }
+  
 }

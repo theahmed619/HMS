@@ -1,6 +1,8 @@
 package com.hms.repository;
 
 import com.hms.entity.Appointment;
+import com.hms.entity.User;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,11 +12,18 @@ import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Integer> {
 
-    List<Appointment> findByUserId(int userId);
+   
 
-    List<Appointment> findByDoctorId(int doctorId);
+       // Get appointments by User ID
+       List<Appointment> findByUserId(Long userId);
 
-    List<Appointment> findAllByOrderByIdDesc();
+       // Get appointments by Doctor ID
+       List<Appointment> findByDoctorId(Long doctorId);
+
+       List<Appointment> findByUser(User user);
+
+       List<Appointment> findByDoctorId(int doctorId);
+
 
     @Transactional
     @Modifying

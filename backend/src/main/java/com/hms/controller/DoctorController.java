@@ -1,6 +1,8 @@
 package com.hms.controller;
 
+import com.hms.entity.Appointment;
 import com.hms.entity.Doctor;
+import com.hms.entity.User;
 import com.hms.service.AppointmentService;
 import com.hms.service.DoctorService;
 
@@ -8,6 +10,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -32,29 +35,61 @@ public class DoctorController {
         Doctor savedDoctor = doctorService.registerDoctor(doctor);
         return ResponseEntity.ok(savedDoctor);
     }
-
-    // Doctor Login
-   @PostMapping("/login")
-public ResponseEntity<?> loginDoctor(@RequestBody Map<String, String> credentials) {
-    if (credentials == null || !credentials.containsKey("email") || !credentials.containsKey("password")) {
-        return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Email and password are required."));
+    // Doc Login
+    @PostMapping("/login")
+    public ResponseEntity<?> docUser(@RequestBody User user, HttpSession session) {
+        Doctor loggedInDoctor = doctorService.loginDoctor(user.getEmail(), user.getPassword());
+        if (loggedInDoctor != null) {
+            session.setAttribute("doctor", loggedInDoctor);
+            return ResponseEntity.ok(loggedInDoctor);
+        } else {
+            return ResponseEntity.badRequest().body("Invalid email or password!");
+        }
     }
 
-    String email = credentials.get("email");
-    String password = credentials.get("password");
-
-    Optional<Doctor> doctor = doctorService.loginDoctor(email, password);
-
-    if (doctor.isPresent()) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Login successful");
-        response.put("doctor", doctor.get()); // Send doctor details if needed
-        return ResponseEntity.ok(response);
-    } else {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Collections.singletonMap("error", "Invalid email or password"));
-    }
-}
+    
+    
+        // @PostMapping("/login")
+        // public ResponseEntity<Map<String, Object>> loginDoctor(@RequestBody Doctor doctor, HttpSession session) {
+        //     Map<String, Object> response = new HashMap<>();
+        
+        //     Doctor loggedInDoctor = doctorService.loginDoctor(doctor.getEmail(), doctor.getPassword());
+        
+        //     if (loggedInDoctor != null) {
+        //         session.setAttribute("docObj", loggedInDoctor);
+        //         response.put("doctor", loggedInDoctor);
+        //         response.put("message", "Login successful");
+        //         return ResponseEntity.ok(response);
+        //     } else {
+        //         response.put("error", "Invalid email or password");
+        //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        //     }
+        // }
+        
+        @PostMapping("/update-comment")
+        public ResponseEntity<String> updateComment(
+            @RequestParam int id,
+            @RequestParam int doctorId,
+            @RequestParam String comment
+        ) {
+            Appointment appointment = appointmentService.getAppointmentById(id);
+    
+            if (appointment != null) {
+                appointment.setComment(comment);
+    
+                // ✅ If doctor writes "Accept", set status to "Approved"
+                if ("Accept".equalsIgnoreCase(comment.trim())) {
+                    appointment.setStatus("Approved");
+                } else {
+                    appointment.setStatus("Pending");
+                }
+    
+                appointmentService.save(appointment);
+                return ResponseEntity.ok("Comment updated successfully!");
+            }
+            return ResponseEntity.badRequest().body("Appointment not found.");
+        }
+    
 
       @GetMapping("/logout")
     public ResponseEntity<?> doctorLogout(HttpSession session) {
@@ -63,17 +98,6 @@ public ResponseEntity<?> loginDoctor(@RequestBody Map<String, String> credential
         return ResponseEntity.ok("Doctor logout successful");
 
     }
-
-        // Update Appointment Status
-        @PostMapping("/updateStatus")
-        public ResponseEntity<?> updateAppointmentStatus(@RequestParam int id, @RequestParam int doctorId, @RequestParam String comment) {
-            boolean updated = appointmentService.updateDrAppointmentCommentStatus(id, doctorId, comment);
-            if (updated) {
-                return ResponseEntity.ok("Comment updated successfully");
-            } else {
-                return ResponseEntity.status(500).body("Something went wrong on the server!");
-            }
-        }
 
         @GetMapping("/count")
         public ResponseEntity<Long> getTotalDoctors() {
@@ -86,4 +110,10 @@ public ResponseEntity<?> loginDoctor(@RequestBody Map<String, String> credential
             long count = appointmentService.countAppointmentsByDoctor(doctorId);
             return ResponseEntity.ok(count);
         }
-}
+
+        @GetMapping("/all")
+        public ResponseEntity<List<Doctor>> getAllDoctors() {
+            List<Doctor> doctors = doctorService.getAllDoctors();
+            return ResponseEntity.ok(doctors);
+        }
+    }

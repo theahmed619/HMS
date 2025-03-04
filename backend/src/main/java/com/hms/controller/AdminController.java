@@ -3,6 +3,7 @@ package com.hms.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -20,5 +21,11 @@ public class AdminController {
         } else {
             return ResponseEntity.status(401).body("Invalid Credentials");
         }
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<?> getAdminStats() {
+        // Your logic here
+        return ResponseEntity.ok(Collections.singletonMap("message", "Admin stats data"));
     }
 }

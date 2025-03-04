@@ -55,7 +55,7 @@ const NavBar = () => {
             <Link to="/doctor-login" className="nav-link text-white">
               <i className="fas fa-user-md"></i> DOCTOR
             </Link>
-            <Link to="/appointment" className="nav-link text-white">
+            <Link to="/book-appointment" className="nav-link text-white">
               <i className="fa fa-book"></i> APPOINTMENT
             </Link>
             <Link to="/user-login" className="nav-link text-white">
@@ -67,7 +67,7 @@ const NavBar = () => {
             <Link to="/book-appointment" className="nav-link text-white">
               <i className="fa fa-book"></i> APPOINTMENT
             </Link>
-            <Link to="/view-appointment" className="nav-link text-white">
+            <Link to="/my-appointment" className="nav-link text-white">
               <i className="fa fa-calendar-check"></i> VIEW APPOINTMENT
             </Link>
 
