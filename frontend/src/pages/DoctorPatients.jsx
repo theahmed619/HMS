@@ -77,33 +77,15 @@ const DoctorPatients = () => {
                     </span>
                   </td>
                   <td>
-                    {appointment.status === "Pending" ? (
-                      <>
-                        <Button
-                          variant="success"
-                          size="sm"
-                          onClick={() =>
-                            setActiveCommentId(
-                              activeCommentId === appointment.id
-                                ? null
-                                : appointment.id
-                            )
-                          }
-                        >
-                          <i className="fa fa-comment"></i> Comment /
-                          Prescription
-                        </Button>
-
-                        {activeCommentId === appointment.id && (
-                          <CommentForm
-                            appointmentId={appointment.id}
-                            doctorId={doctor?.id}
-                            refreshAppointments={() =>
-                              fetchAppointments(doctor?.id)
-                            }
-                          />
-                        )}
-                      </>
+                    {appointment.status &&
+                    appointment.status.toLowerCase() === "pending" ? (
+                      <Button
+                        variant="success"
+                        size="sm"
+                        onClick={() => navigate(`/comment/${appointment.id}`)}
+                      >
+                        <i className="fa fa-comment"></i> Comment / Prescription
+                      </Button>
                     ) : (
                       <Button variant="secondary" size="sm" disabled>
                         <i className="fa fa-comment"></i> Commented
@@ -122,19 +104,19 @@ const DoctorPatients = () => {
 
 // Function to get Bootstrap badge class based on status
 const getStatusBadge = (status) => {
-  if (!status) return "bg-secondary text-white"; // Handle null or undefined status
+  if (!status) return "bg-secondary text-white"; // Default style if status is null/undefined
 
-  switch (status.toLowerCase()) { // Ensure status is a string before calling toLowerCase()
+  switch (status.toLowerCase()) {
     case "pending":
       return "bg-warning text-dark";
+    case "approved":
     case "accept":
       return "bg-success text-white";
-    case "reject":
+    case "rejected":
       return "bg-danger text-white";
     default:
-      return "bg-secondary text-white";
+      return "bg-secondary text-white"; // Default for unknown statuses
   }
 };
-
 
 export default DoctorPatients;

@@ -1,6 +1,7 @@
 package com.hms.controller;
 
 import com.hms.entity.Appointment;
+import com.hms.repository.AppointmentRepository;
 import com.hms.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,9 @@ public class AppointmentController {
 
     @Autowired
     private AppointmentService appointmentService;
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
 
     @PostMapping("/add")
@@ -87,4 +91,33 @@ public class AppointmentController {
         long count = appointmentService.countAppointmentsByDoctor(doctorId);
         return ResponseEntity.ok(count);
     }
+
+    @PutMapping("/update-comment")
+public ResponseEntity<String> updateComment(@RequestBody Appointment appointment) {
+    try {
+        // Fetch existing appointment
+        Appointment existingAppointment = appointmentRepository.findById(appointment.getId())
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        // Update the comment
+        existingAppointment.setComment(appointment.getComment());
+
+        // If doctor writes "Accept", set status to "Approved"
+        if (appointment.getComment().equalsIgnoreCase("Accept")) {
+            existingAppointment.setStatus("Approved");
+        } else if (appointment.getComment().equalsIgnoreCase("Reject")) {
+            existingAppointment.setStatus("Rejected");
+        } else {
+            existingAppointment.setStatus("Pending"); // Keep it pending if no decision
+        }
+
+        // Save updated appointment
+        appointmentRepository.save(existingAppointment);
+
+        return ResponseEntity.ok("Comment updated successfully");
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update comment");
+    }
+}
+
 }

@@ -7,19 +7,22 @@ const CommentForm = ({ appointmentId, doctorId, refreshAppointments }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        const response = await axios.post("http://localhost:8090/api/doctor/update-comment", null, {
-            params: {
-                id: appointmentId,
-                doctorId: doctorId,
-                comment: comment,
-            },
-        });
-        alert(response.data);
-        refreshAppointments();
+      const response = await axios.put(
+        "http://localhost:8090/api/appointments/update-comment",
+        {
+          id: appointmentId,
+          doctorId: doctorId,
+          comment: comment,
+        }
+      );
+
+      alert(response.data);
+      setComment(""); // Clear the comment field
+      refreshAppointments(); // Refresh the table to reflect updated status
     } catch (error) {
-        alert("Error updating comment.");
+      alert("Error updating comment.");
     }
-};
+  };
 
   return (
     <form onSubmit={handleSubmit} className="p-3 border rounded">

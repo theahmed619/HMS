@@ -16,6 +16,7 @@ import DoctorLogin from "./pages/DoctorLogin";
 import DoctorRegister from "./pages/DoctorRegister";
 import MyAppointment from "./pages/MyAppointments";
 import DoctorPatients from "./pages/DoctorPatients";
+import CommentForm from "./pages/CommentForm";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -35,6 +36,7 @@ function App() {
           <Route path="/doctor-register" element={<DoctorRegister />} />
           <Route path="/my-appointment" element={<MyAppointment />} />
           <Route path="/doc-appointment" element={<DoctorPatients />} />
+          <Route path="/comment/:id" element={<CommentForm />} />
         </Routes>
       </Router>
     </>
